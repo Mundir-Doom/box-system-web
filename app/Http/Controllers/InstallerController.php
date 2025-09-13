@@ -121,19 +121,35 @@ class InstallerController extends Controller
         }
    }
    public function finish(Request $request){
-            DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
-                foreach(DB::select('SHOW TABLES') as $table) {
-                    $table_array = get_object_vars($table);
-                    Schema::drop($table_array[key($table_array)]);
+            try { Artisan::call('config:clear'); } catch (\Throwable $e) {}
+
+            $migrateError = null;
+            try {
+                Artisan::call('migrate:fresh', [
+                    '--seed'  => true,
+                    '--force' => true,
+                ]);
+            } catch (\Throwable $e) {
+                $migrateError = $e->getMessage();
             }
-            Artisan::call('migrate:refresh');
-            Artisan::call('db:seed'); 
-            $user                = User::find(1);
-            $user->name          = $request->user_name;
-            $user->email         = $request->email;
-            $user->password      = bcrypt($request->login_password);
-            $user->save();
+
+            if (!Schema::hasTable('users')) {
+                $message = 'Installation failed: users table was not created.';
+                if ($migrateError) { $message .= ' '.$migrateError; }
+                return redirect('install')->withErrors(['migration' => $message]);
+            }
+
+            // Create or update the admin user using email as key
+            $user = User::updateOrCreate(
+                ['email' => $request->email],
+                [
+                    'name'     => $request->user_name,
+                    'password' => bcrypt($request->login_password),
+                ]
+            );
+
             $this->envWrite('APP_INSTALLED', 'yes');
+
             if ($request->boolean('do_storage_link')) {
                 try { Artisan::call('storage:link'); } catch (\Throwable $e) {}
             }
@@ -142,9 +158,9 @@ class InstallerController extends Controller
                 try { Artisan::call('route:cache'); } catch (\Throwable $e) {}
                 try { Artisan::call('view:cache'); } catch (\Throwable $e) {}
             } else {
-                Artisan::call('config:clear');
+                try { Artisan::call('config:clear'); } catch (\Throwable $e) {}
             }
-        
+
             return redirect('/');
         }
         //env write
