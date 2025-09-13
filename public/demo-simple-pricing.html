@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Hub-to-Hub Pricing - Box System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --danger-color: #e53e3e;
+            --light-bg: #f7fafc;
+            --dark-text: #2d3748;
+            --medium-text: #4a5568;
+            --light-text: #718096;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--dark-text);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+
+        .feature-description {
+            color: var(--medium-text);
+            line-height: 1.6;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--dark-text);
+        }
+
+        .pricing-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .pricing-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--light-bg);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+
+        .pricing-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .pricing-details {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .pricing-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pricing-detail:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+
+        .pricing-label {
+            color: var(--medium-text);
+        }
+
+        .pricing-value {
+            color: var(--dark-text);
+            font-weight: 500;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, var(--success-color) 0%, #38a169 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            border-radius: 20px;
+            margin: 4rem 0;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            color: var(--primary-color);
+        }
+
+        .btn-secondary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 2rem 0;
+        }
+
+        .comparison-card {
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+        }
+
+        .comparison-card.old {
+            border-color: var(--danger-color);
+            background: #fef2f2;
+        }
+
+        .comparison-card.new {
+            border-color: var(--success-color);
+            background: #f0fdf4;
+        }
+
+        .comparison-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comparison-title.old {
+            color: var(--danger-color);
+        }
+
+        .comparison-title.new {
+            color: var(--success-color);
+        }
+
+        .comparison-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-list li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comparison-list li i {
+            width: 16px;
+        }
+
+        .old .comparison-list li i {
+            color: var(--danger-color);
+        }
+
+        .new .comparison-list li i {
+            color: var(--success-color);
+        }
+
+        .footer {
+            background: var(--dark-text);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .demo-section {
+                padding: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">
+                <i class="fas fa-route"></i>
+                Simple Hub-to-Hub Pricing
+            </h1>
+            <p class="hero-subtitle">
+                Clean, straightforward pricing system - no more complexity!
+            </p>
+            <div style="margin-top: 2rem;">
+                <a href="/admin/hub-pricing" class="btn btn-primary me-3">
+                    <i class="fas fa-cog"></i>
+                    Manage Hub Pricing
+                </a>
+                <a href="/admin/parcel/create" class="btn btn-secondary">
+                    <i class="fas fa-plus"></i>
+                    Create Parcel
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Features Section -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3 class="feature-title">Hub-to-Hub Only</h3>
+                <p class="feature-description">
+                    Simple pricing based only on which hub the parcel goes from and to. No complex distance calculations or zone-based pricing.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-weight-hanging"></i>
+                </div>
+                <h3 class="feature-title">Optional Weight</h3>
+                <p class="feature-description">
+                    Weight is completely optional. If specified, it adds extra cost per kg. If not specified, only base hub-to-hub price applies.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <h3 class="feature-title">Details Only</h3>
+                <p class="feature-description">
+                    Delivery type and category are just for reference and tracking. They don't affect pricing at all - keeping it simple.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3 class="feature-title">Easy Management</h3>
+                <p class="feature-description">
+                    Beautiful interface to set pricing for each hub-to-hub combination. Set base price, per-kg rate, and min/max limits.
+                </p>
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="comparison-section">
+            <h2 class="section-title">Before vs After</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card old">
+                    <h3 class="comparison-title old">
+                        <i class="fas fa-times-circle"></i>
+                        Old Complex System
+                    </h3>
+                    <ul class="comparison-list">
+                        <li><i class="fas fa-times"></i> Distance calculations</li>
+                        <li><i class="fas fa-times"></i> Zone-based pricing</li>
+                        <li><i class="fas fa-times"></i> Category affects pricing</li>
+                        <li><i class="fas fa-times"></i> Delivery type affects pricing</li>
+                        <li><i class="fas fa-times"></i> Complex weight calculations</li>
+                        <li><i class="fas fa-times"></i> Hard to understand</li>
+                        <li><i class="fas fa-times"></i> Difficult to manage</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card new">
+                    <h3 class="comparison-title new">
+                        <i class="fas fa-check-circle"></i>
+                        New Simple System
+                    </h3>
+                    <ul class="comparison-list">
+                        <li><i class="fas fa-check"></i> Hub-to-hub pricing only</li>
+                        <li><i class="fas fa-check"></i> Optional weight pricing</li>
+                        <li><i class="fas fa-check"></i> Category is just details</li>
+                        <li><i class="fas fa-check"></i> Delivery type is just details</li>
+                        <li><i class="fas fa-check"></i> Simple weight calculation</li>
+                        <li><i class="fas fa-check"></i> Easy to understand</li>
+                        <li><i class="fas fa-check"></i> Easy to manage</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Examples Section -->
+        <div class="demo-section">
+            <h2 class="section-title">Pricing Examples</h2>
+            <div class="pricing-examples">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <div class="pricing-icon">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                        <h3 class="pricing-title">Tripoli to Benghazi</h3>
+                    </div>
+                    <div class="pricing-details">
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Base Price:</span>
+                            <span class="pricing-value">50.00 LYD</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Weight:</span>
+                            <span class="pricing-value">2.0 kg</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Per Kg Rate:</span>
+                            <span class="pricing-value">5.00 LYD/kg</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Weight Charge:</span>
+                            <span class="pricing-value">10.00 LYD</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Total Charge:</span>
+                            <span class="pricing-value">60.00 LYD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <div class="pricing-icon">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                        <h3 class="pricing-title">Misrata to Zawiya</h3>
+                    </div>
+                    <div class="pricing-details">
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Base Price:</span>
+                            <span class="pricing-value">30.00 LYD</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Weight:</span>
+                            <span class="pricing-value">No weight</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Per Kg Rate:</span>
+                            <span class="pricing-value">3.00 LYD/kg</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Weight Charge:</span>
+                            <span class="pricing-value">0.00 LYD</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Total Charge:</span>
+                            <span class="pricing-value">30.00 LYD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <div class="pricing-icon">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                        <h3 class="pricing-title">Zliten to Tripoli</h3>
+                    </div>
+                    <div class="pricing-details">
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Base Price:</span>
+                            <span class="pricing-value">15.00 LYD</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Weight:</span>
+                            <span class="pricing-value">5.0 kg</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Per Kg Rate:</span>
+                            <span class="pricing-value">2.00 LYD/kg</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Weight Charge:</span>
+                            <span class="pricing-value">10.00 LYD</span>
+                        </div>
+                        <div class="pricing-detail">
+                            <span class="pricing-label">Total Charge:</span>
+                            <span class="pricing-value">25.00 LYD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2 class="cta-title">Ready to Simplify Your Pricing?</h2>
+            <p class="cta-description">
+                The new simple hub-to-hub pricing system is now live. No more complexity, just straightforward pricing.
+            </p>
+            <div>
+                <a href="/admin/hub-pricing" class="btn btn-primary me-3">
+                    <i class="fas fa-cog"></i>
+                    Manage Hub Pricing
+                </a>
+                <a href="/admin/parcel/create" class="btn btn-secondary">
+                    <i class="fas fa-plus"></i>
+                    Create Parcel
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <p>&copy; 2024 Box System. Simple hub-to-hub pricing system.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
