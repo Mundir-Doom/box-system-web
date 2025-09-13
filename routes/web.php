@@ -130,6 +130,7 @@ Route::middleware(['XSS', 'IsNotInstalled'])->group(function () {
 });
 Route::middleware(['XSS'])->group(function () {
     Route::post('installing',                      [InstallerController::class, 'installing'])->name('installing');
+    Route::post('install/test-db',                 [InstallerController::class, 'testDb'])->name('install.test-db');
     Route::get('finish',                           [InstallerController::class, 'finish'])->name('final');
 });
 

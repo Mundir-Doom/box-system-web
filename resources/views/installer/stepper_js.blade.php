@@ -51,5 +51,44 @@
         $(".submit").click(function(){
             return false;
         })
+        // Generate strong password for admin
+        $(document).on('click', '#gen-pass', function(){
+            function randomString(len){
+                var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*()_+';
+                var out = ''; for(var i=0;i<len;i++){ out += chars.charAt(Math.floor(Math.random()*chars.length)); }
+                return out;
+            }
+            $('#admin_password').val(randomString(14));
+        });
+
+        // Test DB connection
+        $(document).on('click', '#btn-test-db', function(){
+            var $btn = $(this);
+            var $out = $('#db-test-result');
+            $out.removeClass('text-success text-danger').text('Testing...');
+            $btn.prop('disabled', true);
+            $.ajax({
+                url: '{{ route('install.test-db') }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    host: $('#host').val(),
+                    dbport: $('#dbport').val(),
+                    dbuser: $('input[name="dbuser"]').val(),
+                    dbpassword: $('input[name="dbpassword"]').val(),
+                    dbname: $('input[name="dbname"]').val(),
+                },
+                success: function(resp){
+                    $out.addClass('text-success').text(resp.message || 'Success');
+                },
+                error: function(xhr){
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Failed to connect';
+                    $out.addClass('text-danger').text(msg);
+                },
+                complete: function(){
+                    $btn.prop('disabled', false);
+                }
+            });
+        });
         });
 </script>

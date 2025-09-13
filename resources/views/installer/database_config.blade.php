@@ -1,13 +1,19 @@
 <div role="tabpanel" class="tab-pane wow zoomIn" id="database-configuration-tab">
-    <h3 class="title">Database Configuration</h3>
+    <h3 class="title">Database & App Configuration</h3>
     <div class="section clearfix">
-        <p>Please enter your database connection details.</p>
+        <p>Please enter your database connection details and app URL. You can test the DB connection before continuing.</p>
         <hr />
         <div class="row">
             <div class="col-md-6">
             <div class="form-group mt-2 ">
                 <label for="host" >Database Host</label>
                     <input type="text" value="{{old('host') ?? 'localhost'}}" id="host"  name="host" class="form-control  form--control" placeholder="Database Host (usually localhost)"  />
+                </div>
+            </div>
+            <div class=" col-md-6">
+            <div class="form-group  mt-2">
+                <label for="dbport" >Database Port</label>
+                    <input type="text" value="{{old('dbport') ?? '3306'}}" id="dbport" name="dbport" class="form-control  form--control" placeholder="3306" />
                 </div>
             </div>
             <div class=" col-md-6">
@@ -27,6 +33,16 @@
                 <label for="dbname" >Database Name</label>
                     <input type="text" value="{{old('dbname') ?? ''}}" name="dbname" class="form-control  form--control" placeholder="Database Name" />
                 </div>
+            </div>
+            <div class=" col-md-6">
+            <div class="form-group  mt-2">
+                <label for="app_url" >App URL</label>
+                    <input type="text" value="{{ old('app_url') ?? (request()->getSchemeAndHttpHost() ?? '') }}" id="app_url" name="app_url" class="form-control  form--control" placeholder="https://your-domain.com" />
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="button" id="btn-test-db" class="btn btn-outline-primary mt-2">Test Database Connection</button>
+                <span id="db-test-result" class="ml-2"></span>
             </div>
         </div>
     </div>

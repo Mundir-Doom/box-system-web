@@ -52,7 +52,7 @@
             $gd_success = false;
             $allow_url_fopen_success = false;
             $timezone_success=false;
-            $php_version_required = "8.1";
+            $php_version_required = "8.3";
             $current_php_version = PHP_VERSION;
             //check required php version
             if (version_compare($current_php_version, $php_version_required) >= 0) {

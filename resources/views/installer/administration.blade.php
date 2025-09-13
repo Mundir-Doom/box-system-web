@@ -28,8 +28,13 @@
             <div class=" col-md-6">
                 <div class="form-group  mt-2">
                     <label for="password">Login Password</label>
-                    <input type="password" value="{{ old('password') ?? '' }}" name="password"
-                        class="form-control  form--control" placeholder="Login password" />
+                    <div class="input-group">
+                        <input type="password" value="{{ old('password') ?? '' }}" id="admin_password" name="password"
+                            class="form-control  form--control" placeholder="Login password" />
+                        <div class="input-group-append">
+                            <button type="button" id="gen-pass" class="btn btn-outline-secondary">Generate</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class=" col-md-12">
@@ -37,6 +42,21 @@
                     <label for="password">Purchase code</label>
                     <input type="text" value="{{ old('purchase_code') ?? '' }}" name="purchase_code"
                         class="form-control  form--control" placeholder="Enter your purchase code" />
+                </div>
+            </div>
+
+            <div class="col-12 mt-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1" id="do_storage_link" name="do_storage_link" checked>
+                    <label class="form-check-label" for="do_storage_link">
+                        Create storage symlink after install
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1" id="do_cache_config" name="do_cache_config" checked>
+                    <label class="form-check-label" for="do_cache_config">
+                        Cache config and routes after install
+                    </label>
                 </div>
             </div>
 

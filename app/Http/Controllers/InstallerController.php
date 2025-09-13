@@ -22,11 +22,13 @@ class InstallerController extends Controller
        $dbuser         = $request->dbuser;
        $dbpassword     = $request->dbpassword;
        $dbname         = $request->dbname;
+       $dbport         = $request->dbport ?? 3306;
        $first_name     = $request->first_name;
        $last_name      = $request->last_name;
        $user_name      = $first_name.' '.$last_name;
        $email          = $request->email;
        $login_password = $request->password ? $request->password : "";
+       $appUrl         = $request->app_url ?? null;
 
 
         //purchase code verification
@@ -38,7 +40,7 @@ class InstallerController extends Controller
 
          // check for valid database connection
         try {
-             $mysqli = @new \mysqli($host, $dbuser, $dbpassword, $dbname);
+             $mysqli = @new \mysqli($host, $dbuser, $dbpassword, $dbname, (int) $dbport);
         } catch (\Throwable $th) {
             try {
                     //  set database details
@@ -46,6 +48,7 @@ class InstallerController extends Controller
                     $this->envWrite('DB_DATABASE', $dbname);
                     $this->envWrite('DB_USERNAME', $dbuser);
                     $this->envWrite('DB_PASSWORD', $dbpassword);
+                    $this->envWrite('DB_PORT', $dbport);
                     $this->envWrite('APP_INSTALLED', ''); 
                     Artisan::call('config:clear');
                     DB::connection()->getPdo();
@@ -69,16 +72,44 @@ class InstallerController extends Controller
         $this->envWrite('DB_DATABASE', $dbname);
         $this->envWrite('DB_USERNAME', $dbuser);
         $this->envWrite('DB_PASSWORD', $dbpassword);
+        $this->envWrite('DB_PORT', $dbport);
         $this->envWrite('APP_INSTALLED', '');
+        if ($appUrl) {
+            $this->envWrite('APP_URL', $appUrl);
+        }
+        // sensible production defaults
+        $this->envWrite('APP_ENV', 'production');
+        $this->envWrite('APP_DEBUG', 'false');
+        $this->envWrite('FILESYSTEM_DISK', 'public');
         Artisan::call('key:generate');
         Artisan::call('config:clear');
         
         $data = [
-            'user_name'     => $user_name,
-            'email'         => $email,
-            'login_password'=> $login_password
+            'user_name'       => $user_name,
+            'email'           => $email,
+            'login_password'  => $login_password,
+            'do_storage_link' => $request->boolean('do_storage_link'),
+            'do_cache_config' => $request->boolean('do_cache_config'),
         ];
         return redirect()->route('final',$data);
+   }
+   public function testDb(Request $request){
+        $host       = $request->input('host');
+        $user       = $request->input('dbuser');
+        $pass       = $request->input('dbpassword');
+        $name       = $request->input('dbname');
+        $port       = (int) ($request->input('dbport') ?? 3306);
+        try {
+            $mysqli = @new \mysqli($host, $user, $pass, $name, $port);
+            if ($mysqli && $mysqli->connect_errno === 0) {
+                $mysqli->close();
+                return response()->json(['ok' => true, 'message' => 'Database connection successful.']);
+            }
+            $error = $mysqli ? $mysqli->connect_error : 'Unknown error';
+            return response()->json(['ok' => false, 'message' => $error], 422);
+        } catch (\Throwable $e) {
+            return response()->json(['ok' => false, 'message' => $e->getMessage()], 422);
+        }
    }
    public function finish(Request $request){
             DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
@@ -94,7 +125,16 @@ class InstallerController extends Controller
             $user->password      = bcrypt($request->login_password);
             $user->save();
             $this->envWrite('APP_INSTALLED', 'yes');
-            Artisan::call('config:clear');
+            if ($request->boolean('do_storage_link')) {
+                try { Artisan::call('storage:link'); } catch (\Throwable $e) {}
+            }
+            if ($request->boolean('do_cache_config')) {
+                try { Artisan::call('config:cache'); } catch (\Throwable $e) {}
+                try { Artisan::call('route:cache'); } catch (\Throwable $e) {}
+                try { Artisan::call('view:cache'); } catch (\Throwable $e) {}
+            } else {
+                Artisan::call('config:clear');
+            }
         
             return redirect('/');
         }
