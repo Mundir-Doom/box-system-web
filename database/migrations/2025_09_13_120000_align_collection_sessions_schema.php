@@ -7,6 +7,16 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
+    protected function hasIndex(string $table, string $indexName): bool
+    {
+        $dbName = DB::getDatabaseName();
+        $exists = DB::table('information_schema.statistics')
+            ->where('table_schema', $dbName)
+            ->where('table_name', $table)
+            ->where('index_name', $indexName)
+            ->exists();
+        return (bool) $exists;
+    }
     /**
      * Run the migrations.
      */
@@ -37,11 +47,9 @@ return new class extends Migration
             if (!Schema::hasColumn('collection_sessions', 'unassigned_parcels')) {
                 $table->integer('unassigned_parcels')->default(0)->after('assigned_parcels');
             }
-            // Ensure status index
-            try {
+            // Ensure status index (only if missing)
+            if (!$this->hasIndex('collection_sessions', 'idx_collection_sessions_status')) {
                 $table->index('status', 'idx_collection_sessions_status');
-            } catch (\Throwable $e) {
-                // ignore
             }
         });
 
@@ -88,4 +96,3 @@ return new class extends Migration
         });
     }
 };
-
