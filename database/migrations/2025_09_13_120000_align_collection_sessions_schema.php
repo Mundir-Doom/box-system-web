@@ -47,11 +47,14 @@ return new class extends Migration
             if (!Schema::hasColumn('collection_sessions', 'unassigned_parcels')) {
                 $table->integer('unassigned_parcels')->default(0)->after('assigned_parcels');
             }
-            // Ensure status index (only if missing)
-            if (!$this->hasIndex('collection_sessions', 'idx_collection_sessions_status')) {
-                $table->index('status', 'idx_collection_sessions_status');
-            }
+            // Do not add indexes inside the Schema::table builder for existing tables,
+            // because Laravel batches these and throws after the closure (hard to catch).
         });
+
+        // Ensure status index (only if missing) using raw SQL outside the builder
+        if (!$this->hasIndex('collection_sessions', 'idx_collection_sessions_status')) {
+            try { DB::statement('CREATE INDEX idx_collection_sessions_status ON collection_sessions (status)'); } catch (\Throwable $e) {}
+        }
 
         // Backfill from legacy columns if present
         if (Schema::hasColumn('collection_sessions', 'collection_slot_id')) {
