@@ -22,7 +22,15 @@ class IsNotInstalledMiddleware
         try {
             DB::connection()->getPdo();
         } catch (\Throwable $th) {
-             return response()->view('installer.index');
+            try {
+                if (empty(config('app.key'))) {
+                    \Artisan::call('key:generate');
+                    \Artisan::call('config:clear');
+                }
+            } catch (\Throwable $e) {
+                // ignore and render installer
+            }
+            return response()->view('installer.index');
         }
 
         if(Config::get('app.app_installed') == 'yes'  && Schema::hasTable('settings') && Schema::hasTable('general_settings') && Schema::hasTable('users')):

@@ -13,6 +13,15 @@ use GeoSot\EnvEditor\Facades\EnvEditor;
 class InstallerController extends Controller
 {
     public function index(){
+        try {
+            $appKey = config('app.key');
+            if (empty($appKey)) {
+                \Artisan::call('key:generate');
+                \Artisan::call('config:clear');
+            }
+        } catch (\Throwable $e) {
+            // ignore and try to render installer
+        }
         return view('installer.index');
     }
 
